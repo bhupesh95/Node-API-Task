@@ -13,7 +13,7 @@ const userService = {
         email: req.body.email.toLowerCase()
       });
 
-      if(userExist !== null) {
+      if (userExist !== null) {
         return res
           .status(200)
           .json({ message: "user already exists with this email!" });
@@ -75,7 +75,7 @@ const userService = {
     }
     const userPassverify = await bcrypt.compare(password, userInfo.password);
     if (!userPassverify) {
-     return res
+      return res
         .status(StatusCodes.UNAUTHORIZED)
         .json(
           new ApiResponse(
@@ -123,7 +123,7 @@ const userService = {
   getAllUsers: async (req, res) => {
     try {
       const allUsers = await User.find({});
-      if (!allUsers) {
+      if (allUsers.length === 0) {
         res
           .status(StatusCodes.NOT_FOUND)
           .json(
