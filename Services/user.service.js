@@ -9,11 +9,11 @@ const { authToken, generateToken } = jwtProcess;
 const userService = {
   signUp: async (req, res) => {
     try {
-      const userExist = await User.find({
-        email: req.body.email.toLowerCase
+      const userExist = await User.findOne({
+        email: req.body.email.toLowerCase()
       });
 
-      if (!userExist.length) {
+      if(userExist !== null) {
         return res
           .status(200)
           .json({ message: "user already exists with this email!" });
@@ -37,7 +37,7 @@ const userService = {
         password: hashPassword
       });
 
-      res
+      return res
         .status(StatusCodes.CREATED)
         .json(
           new ApiResponse(

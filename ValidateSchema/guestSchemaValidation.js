@@ -2,8 +2,8 @@ import Joi from "joi";
 import PasswordComplexity from "joi-password-complexity";
 
 export const singUpSchema = {
-  first_name: Joi.string().required,
-  last_name: Joi.string().required,
+  first_name: Joi.string().required(),
+  last_name: Joi.string().required(),
   email: Joi.string().required().email(),
   password: new PasswordComplexity({
     min: 8,
