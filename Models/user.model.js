@@ -23,18 +23,12 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  is_actice: {
+  is_active: {
     type: Boolean,
     default: true
   },
-  created_at: {
-    type: Date,
-    default: Date.now()
-  },
-  updated_at: {
-    type: Date,
-    default: Date.now()
-  }
+},{
+  timestamps:true
 });
 
 const User = mongoose.model("User", UserSchema);

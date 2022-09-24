@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-
 import bcrypt from "bcryptjs";
 import User from "../Models/user.model.js";
 import Role from "../Models/role.model.js";
@@ -10,11 +9,11 @@ const { authToken, generateToken } = jwtProcess;
 const userService = {
   signUp: async (req, res) => {
     try {
-      let userExist = await User.find({
-        email: req.body.email
+      const userExist = await User.find({
+        email: req.body.email.toLowerCase
       });
 
-      if (userExist) {
+      if (!userExist.length) {
         return res
           .status(200)
           .json({ message: "user already exists with this email!" });
@@ -64,8 +63,7 @@ const userService = {
 
   login: async (req, res) => {
     const { email, password } = req.body;
-
-    let userInfo = await User.findOne({
+    const userInfo = await User.findOne({
       email: email
     });
     if (!userInfo) {
@@ -77,7 +75,7 @@ const userService = {
     }
     const userPassverify = await bcrypt.compare(password, userInfo.password);
     if (!userPassverify) {
-      res
+     return res
         .status(StatusCodes.UNAUTHORIZED)
         .json(
           new ApiResponse(
@@ -90,7 +88,7 @@ const userService = {
     }
 
     try {
-      let payload = {
+      const payload = {
         email: userInfo.password,
         password: userInfo.password,
         role_id: userInfo.role_id
@@ -124,7 +122,7 @@ const userService = {
 
   getAllUsers: async (req, res) => {
     try {
-      let allUsers = await User.find({});
+      const allUsers = await User.find({});
       if (!allUsers) {
         res
           .status(StatusCodes.NOT_FOUND)
@@ -158,9 +156,9 @@ const userService = {
 
   getUsersByRole: async (req, res) => {
     try {
-      const roleName = req.body.roleName;
+      const { role } = req.query;
       const roleId = await Role.findOne({
-        name: roleName
+        name: role
       });
       if (roleId) {
         const allUserByRole = await User.find({
@@ -171,12 +169,22 @@ const userService = {
           .json(
             new ApiResponse(
               allUserByRole,
-              `All users of ${roleName}`,
+              `All users of ${role}`,
               StatusCodes.OK,
               true
             )
           );
-      }
+      } else
+        res
+          .status(StatusCodes.NOT_FOUND)
+          .json(
+            new ApiResponse(
+              null,
+              "No data found.",
+              StatusCodes.NOT_FOUND,
+              false
+            )
+          );
     } catch (error) {
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -194,7 +202,7 @@ const userService = {
   getUserCountByRole: async (req, res, next) => {
     try {
       let count = {};
-      let roles = await Role.find({});
+      const roles = await Role.find({});
       for await (const element of roles) {
         const users = await User.find({ role_id: element._id });
         const roleName = element.name;

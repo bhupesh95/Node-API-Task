@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const RoleSchema = {
+const RoleSchema = mongoose.Schema({
   name: {
     type: String,
     unique:true,
@@ -9,16 +9,10 @@ const RoleSchema = {
   is_active: {
     type: Boolean,
     default: true
-  },
-  created_at: {
-    type: Date,
-    default:Date.now()
-  },
-  updated_at: {
-    type: Date,
-    default:Date.now()
   }
-};
+},{
+  timestamps:true
+});
 
 const Role = mongoose.model("Role", RoleSchema);
 export default Role;
